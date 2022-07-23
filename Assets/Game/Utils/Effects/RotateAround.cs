@@ -10,14 +10,25 @@ namespace Additions.Effects
         protected override void EffectLogic()
         {
             Sequence = DOTween.Sequence();
-            /*
-	        Sequence.Append(transform.DORotateAround(duration / 2f)
-                .SetEase(Ease.InBack)
+
+            Vector3 newVec = transform.rotation.eulerAngles;
+            newVec.y += 180;
+
+            Sequence.Append(transform.DORotate(NewRotationAngle(), duration / 2f)
+                .SetEase(Ease.Linear)
                 .OnComplete(
-                () => transform.DORotateAround(duration / 2f)
-                    .SetEase(Ease.OutBack)
+                () => transform.DORotate(NewRotationAngle(), duration / 2f)
+                    .SetEase(Ease.Linear)
                     .OnComplete(Finish)));
-            */
+            
+        }
+
+        private Vector3 NewRotationAngle()
+        {
+            Vector3 newAngle = transform.rotation.eulerAngles;
+            newAngle.y += 180;
+
+            return newAngle;
         }
     }
 }
