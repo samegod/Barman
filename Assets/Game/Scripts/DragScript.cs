@@ -1,102 +1,108 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class DragScript : MonoBehaviour
 {
-    public bool isDragging = false;
-    public Camera cam;
-    public float pushForce;
-    public Trajectory trajectory;
-    Rigidbody rb;
-    GameControl game;
+    [SerializeField] private float pushForce;
 
-    Vector3 startPoint;
-    Vector3 endpoint;
-    Vector3 direction;
-    Vector3 force;
-    float distance;
+    [SerializeField, HideInInspector] private Rigidbody rb;
 
-    bool started;
-    bool ready;
+    private Trajectory _trajectory;
+
+    private Vector3 _startPoint;
+    private Vector3 _endpoint;
+    private Vector3 _force;
+    private float _distance;
+
+    private bool _isDragging;
+    private bool _started;
+    private bool _ready;
+
+    public event Action OnDragStop;
 
     public void Start()
     {
-        started = false;
-        ready = true;
-
-        cam = Camera.main;
-        rb = GetComponent<Rigidbody>();
-        trajectory = GameObject.FindGameObjectWithTag("Trajectory").GetComponent<Trajectory>();
-        game = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameControl>();
+        _started = false;
+        _ready = true;
     }
 
     public void Update()
     {
-        if (isDragging)
-        {
+        if (_isDragging)
             OnDrag();
-        }
 
-        if(rb.velocity.x == 0 && started)
-        {
-            game.Pushed();
-            started = false;
-            rb.freezeRotation = false;
-        }
+        if (rb.velocity.x != 0 || _started == false) return;
+
+        _started = false;
+        rb.freezeRotation = false;
     }
+
+    public void Init(Trajectory trajectory) =>
+        _trajectory = trajectory;
 
     private void OnMouseDown()
     {
-        if (ready)
+        if (_ready)
         {
-            isDragging = true;
+            _isDragging = true;
             OnDragStart();
         }
     }
 
     private void OnMouseUp()
     {
-        if (ready)
+        if (_ready)
         {
-            isDragging = false;
+            _isDragging = false;
             OnDragEnd();
+
+            OnDragStop?.Invoke();
+
             StartCoroutine(Wait());
-            ready = false;
+            _ready = false;
         }
     }
 
-    void OnDragStart()
+    private void OnDragStart()
     {
-        startPoint = Input.mousePosition;
+        _startPoint = Input.mousePosition;
 
-        trajectory.Show();
+        _trajectory.Show();
     }
 
-    void OnDrag()
+    private void OnDrag()
     {
-        endpoint = Input.mousePosition;
-        distance = Vector2.Distance(startPoint, endpoint);
-        direction = (startPoint - endpoint).normalized;
-        force = direction * distance * pushForce;
+        _endpoint = Input.mousePosition;
+        _distance = Vector2.Distance(_startPoint, _endpoint);
+        _force = (_startPoint - _endpoint).normalized * _distance * pushForce;
 
-        Debug.DrawLine(this.transform.position, endpoint);
-
-        trajectory.UpdateDots(this.transform.position, force);
+        _trajectory.UpdateDots(transform.position, _force);
     }
 
-    void OnDragEnd()
+    private void OnDragEnd()
     {
-        isDragging = false;
+        _isDragging = false;
 
-        gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(force.x, 0, 0));
+        rb.AddForce(new Vector3(_force.x, 0, 0));
 
-        trajectory.Hide();
+        _trajectory.Hide();
     }
 
     private IEnumerator Wait()
     {
         yield return new WaitForSeconds(0.1f);
-        started = true;
+        _started = true;
     }
+
+    #region Editor
+
+    private void OnValidate()
+    {
+        if (rb == null)
+            rb = GetComponent<Rigidbody>();
+    }
+
+    #endregion
 }

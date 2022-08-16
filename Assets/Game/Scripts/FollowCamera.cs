@@ -1,82 +1,85 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 public class FollowCamera : MonoBehaviour
 {
-    public GameObject beer;
-    public float speed;
-    public GameObject fin;
-    private bool Overview;
+	[SerializeField] private Transform target;
+	[SerializeField] private Transform overviewPosition;
+	[SerializeField] private float zoomModifierSpeed = 0.1f;
+	[SerializeField] private float speed;
 
+	private Vector2 _firstTouchPrevPos;
+	private Vector2 _secondTouchPrevPos;
+	private float _touchesPrevPosDifference;
+	private float _touchesCurPosDifference;
+	private float _zoomModifier;
+	private bool _overview;
 
-    Camera mainCamera;
+	private void Update()
+	{
+		if(target == null) return;
 
-    float touchesPrevPosDifference, touchesCurPosDifference, zoomModifier;
+		if (!_overview)
+		{
+			var position = transform.position;
+			var targetPosition = target.position;
+			var targetPos = new Vector3()
+			{
+				x = targetPosition.x,
+				y = targetPosition.y + 0.2f,
+				z = position.z,
+			};
 
-    Vector2 firstTouchPrevPos, secondTouchPrevPos;
+			var pos = Vector3.Lerp(position, targetPos, speed * Time.deltaTime);
+			position = pos;
+			transform.position = position;
+		}
 
-    [SerializeField]
-    float zoomModifierSpeed = 0.1f;
+		if (Input.touchCount == 2)
+		{
+			Touch firstTouch = Input.GetTouch(0);
+			Touch secondTouch = Input.GetTouch(1);
 
-    [SerializeField]
+			_firstTouchPrevPos = firstTouch.position - firstTouch.deltaPosition;
+			_secondTouchPrevPos = secondTouch.position - secondTouch.deltaPosition;
 
-    private void Start()
-    {
-        Overview = true;
-        this.transform.position = new Vector3(fin.transform.position.x, fin.transform.position.y + 0.2f, fin.transform.position.z - 2.5f);
-        StartCoroutine(Wait());
+			_touchesPrevPosDifference = (_firstTouchPrevPos - _secondTouchPrevPos).magnitude;
+			_touchesCurPosDifference = (firstTouch.position - secondTouch.position).magnitude;
 
+			_zoomModifier = (firstTouch.deltaPosition - secondTouch.deltaPosition).magnitude * zoomModifierSpeed;
 
-        // Use this for initialization
-        mainCamera = GetComponent<Camera>();
-    }
+			if (_touchesPrevPosDifference > _touchesCurPosDifference && transform.position.z > -11.5f)
+				transform.position = new Vector3(transform.position.x, transform.position.y,
+					transform.position.z - _zoomModifier);
+			if (_touchesPrevPosDifference < _touchesCurPosDifference && transform.position.z < -9.5f)
+				transform.position = new Vector3(transform.position.x, transform.position.y,
+					transform.position.z + _zoomModifier);
+		}
+	}
 
-    private void Update()
-    {
-        if (!Overview)
-        {
-            Vector3 target = new Vector3()
-            {
-                x = beer.transform.position.x,
-                y = beer.transform.position.y + 0.2f,
-                z = this.transform.position.z,
-            };
+	public void SetTarget(Transform targetPos) =>
+		target = targetPos;
 
-            Vector3 pos = Vector3.Lerp(this.transform.position, target, speed * Time.deltaTime);
-            this.transform.position = pos;
-        }
+	public async void WaitAndOverview(int seconds, Transform pointToMove)
+	{
+		_overview = true;
 
+		var position = overviewPosition.position;
+		transform.position = new Vector3(position.x, position.y + 0.2f, position.z - 2.5f);
 
-        // Update is called once per frame
-        if (Input.touchCount == 2)
-        {
-            Touch firstTouch = Input.GetTouch(0);
-            Touch secondTouch = Input.GetTouch(1);
+		transform.DOMove(new Vector3(pointToMove.position.x, transform.position.y, transform.position.z), seconds);
 
-            firstTouchPrevPos = firstTouch.position - firstTouch.deltaPosition;
-            secondTouchPrevPos = secondTouch.position - secondTouch.deltaPosition;
+		StartCoroutine(Wait(seconds));
+	}
 
-            touchesPrevPosDifference = (firstTouchPrevPos - secondTouchPrevPos).magnitude;
-            touchesCurPosDifference = (firstTouch.position - secondTouch.position).magnitude;
+	private IEnumerator Wait(int sec)
+	{
+		yield return new WaitForSeconds(sec);
 
-            zoomModifier = (firstTouch.deltaPosition - secondTouch.deltaPosition).magnitude * zoomModifierSpeed;
-
-            if (touchesPrevPosDifference > touchesCurPosDifference && this.transform.position.z > -11.5f)
-                this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z - zoomModifier);
-            if (touchesPrevPosDifference < touchesCurPosDifference && this.transform.position.z < -9.5f)
-                this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z + zoomModifier);
-
-        }
-    }
-
-    public void NewBeer(GameObject newBeer)
-    {
-        beer = newBeer;
-    }
-
-    IEnumerator Wait()
-    {
-        yield return new WaitForSeconds(1f);
-        Overview = false;
-    }
+		_overview = false;
+	}
 }

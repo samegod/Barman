@@ -63,7 +63,7 @@ public class GameControl : MonoBehaviour {
                 else
                 {
                     beers[currentBeer].SetActive(true);
-                    cam.NewBeer(beers[currentBeer]);
+                    cam.SetTarget(beers[currentBeer].transform);
                     switchCam = false;
                 }
             }

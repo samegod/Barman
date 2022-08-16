@@ -1,18 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Trajectory : MonoBehaviour
 {
     [SerializeField] int dotsNumber;
-    [SerializeField] GameObject dotsParent;
-    [SerializeField] GameObject dotsPrefab;
-    [SerializeField] float dotSpacing;
-    public float k;
+    [SerializeField] private GameObject dotsParent;
+    [SerializeField] private GameObject dotsPrefab;
+    [SerializeField] private float dotSpacing;
+    [SerializeField] private float detentionFacility = 2500;
 
-    Vector3 pos;
-    float timeStamp;
-    Transform[] dotsList;
+    private Vector3 _pos;
+    private float _timeStamp;
+    private Transform[] _dotsList;
 
     private void Start()
     {
@@ -23,33 +21,33 @@ public class Trajectory : MonoBehaviour
 
     void PrepareDots()
     {
-        dotsList = new Transform[dotsNumber];
+        _dotsList = new Transform[dotsNumber];
 
         for (int i = 0; i < dotsNumber; i++)
         {
-            dotsList[i] = Instantiate(dotsPrefab, null).transform;
-            dotsList[i].parent = dotsParent.transform;
+            _dotsList[i] = Instantiate(dotsPrefab, null).transform;
+            _dotsList[i].parent = dotsParent.transform;
 
             if (i > 0)
             {
-                Vector3 scale = new Vector3(dotsList[i - 1].transform.localScale.x - 0.01f, dotsList[i - 1].transform.localScale.y - 0.01f, 1);
-                dotsList[i].transform.localScale = scale;
+                Vector3 scale = new Vector3(_dotsList[i - 1].transform.localScale.x - 0.01f, _dotsList[i - 1].transform.localScale.y - 0.01f, 1);
+                _dotsList[i].transform.localScale = scale;
             }
         }
     }
 
     public void UpdateDots(Vector3 ballPos, Vector2 forceApplied)
     {
-        timeStamp = dotSpacing;
+        _timeStamp = dotSpacing;
 
         for (int i = 0; i < dotsNumber; i++)
         {
-            pos.x = (ballPos.x + forceApplied.x / k * timeStamp);
-            pos.y = ballPos.y;
-            pos.z = ballPos.z;
+            _pos.x = (ballPos.x + forceApplied.x / detentionFacility * _timeStamp);
+            _pos.y = ballPos.y;
+            _pos.z = ballPos.z;
 
-            dotsList[i].position = pos;
-            timeStamp += dotSpacing;
+            _dotsList[i].position = _pos;
+            _timeStamp += dotSpacing;
         }
     }
 
