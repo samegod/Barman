@@ -48,7 +48,6 @@ namespace Game.Scripts.LevelLogic
 
 				if (beer.IsIdle)
 				{
-					Debug.Log(2);
 					Complete();
 
 					break;

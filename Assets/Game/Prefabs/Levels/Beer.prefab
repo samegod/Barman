@@ -61,8 +61,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 212e4913e8409304eb3b3ea6d86e8267, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pushForce: 0.6
-  rb: {fileID: 2630954527093356370}
+  beer: {fileID: 2367873788090538775}
+  minForceToPush: 150
+  pushForce: 0.35
 --- !u!54 &2630954527093356370
 Rigidbody:
   m_ObjectHideFlags: 0

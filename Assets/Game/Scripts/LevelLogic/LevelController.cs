@@ -4,11 +4,13 @@ using Additions.Extensions;
 using Game.Scripts.LevelLogic;
 using Scripts.Enemy.LevelLogic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class LevelController : MonoBehaviour
 {
+	[FormerlySerializedAs("followCamera")]
 	[Header("Camera")]
-	[SerializeField] private FollowCamera followCamera;
+	[SerializeField] private BeerFollowCamera beerFollowCamera;
 
 	[Header("Beer"), Space(5)]
 	[SerializeField] private Beer beer;
@@ -53,7 +55,7 @@ public class LevelController : MonoBehaviour
 
 		InitBeer();
 
-		followCamera.WaitAndOverview(3, levelPoints.Last().transform);
+		beerFollowCamera.WaitAndOverview(3, levelPoints.Last().transform);
 	}
 
 	private void CheckProgress()
@@ -85,7 +87,7 @@ public class LevelController : MonoBehaviour
 
 		SpawnBeer();
 
-		followCamera.SetTarget(_currentBeer.transform);
+		beerFollowCamera.SetTarget(_currentBeer.transform);
 	}
 
 	private void SpawnBeer()

@@ -19,7 +19,7 @@ public class GameControl : MonoBehaviour {
     public bool finish;
     public GameObject nextLvlBtn;
     public GameObject commingSoon;
-    public FollowCamera cam;
+    public BeerFollowCamera cam;
 
     private bool switchCam;
 

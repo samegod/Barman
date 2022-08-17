@@ -51,13 +51,9 @@ public class Trajectory : MonoBehaviour
         }
     }
 
-    public void Show()
-    {
+    public void Show() =>
         dotsParent.SetActive(true);
-    }
 
-    public void Hide()
-    {
+    public void Hide() =>
         dotsParent.SetActive(false);
-    }
 }

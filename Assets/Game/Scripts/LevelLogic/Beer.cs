@@ -10,6 +10,7 @@ public class Beer : MonoBehaviourPoolObject
 	[SerializeField] private DragScript dragScript;
 	[SerializeField, HideInInspector] private Rigidbody rb;
 
+	public Vector3 CurrentVelocity => rb.velocity;
 	public bool IsIdle => rb.velocity.magnitude == 0;
 
 	public static event Action OnBeerStopped;
@@ -28,7 +29,10 @@ public class Beer : MonoBehaviourPoolObject
 		dragScript.Init(trajectory);
 	}
 
-	public void StartMove() =>
+	public void AddForce(Vector3 force) =>
+		rb.AddForce(force);
+
+	private void StartMove() =>
 		StartCoroutine(WaitToIdle());
 
 	private IEnumerator WaitToIdle()
