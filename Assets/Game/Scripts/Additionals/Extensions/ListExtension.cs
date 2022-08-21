@@ -10,6 +10,9 @@ namespace Additions.Extensions
 		public static IEnumerable<Vector3> Positions(this List<Transform> transforms) =>
 			transforms.Select(x => x.transform.position);
 
+		public static List<Transform> Positions<T>(this List<T> transforms) where T : MonoBehaviour =>
+			transforms.Select(x => x.transform).ToList();
+
 		public static IEnumerable<Vector3> LocalPositions(this List<Transform> transforms) =>
 			transforms.Select(x => x.transform.localPosition);
 

@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Trajectory
+  - ship
+  - asteroid
   layers:
   - Default
   - TransparentFX
@@ -17,8 +19,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Beer
+  - LevelPoint
   - 
   - 
   - 

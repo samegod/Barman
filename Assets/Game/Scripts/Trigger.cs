@@ -5,6 +5,7 @@ using UnityEngine;
 public class Trigger : MonoBehaviour
 {
     public GameObject Push;
+
     private GameObject player;
 
     private void Update()
