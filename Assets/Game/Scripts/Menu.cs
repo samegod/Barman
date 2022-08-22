@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
+    [SerializeField] private Scene _scene;
     public GameObject PlayPanel;
     public GameObject MenuPanel;
     public int N;
@@ -31,7 +32,7 @@ public class Menu : MonoBehaviour
 
     public void StartLevel(int lvl)
     {
-        if (lvl - 1 <= PlayerPrefs.GetInt("Levels"))
-            SceneManager.LoadScene(lvl);
+        //if (lvl - 1 <= PlayerPrefs.GetInt("Levels"))
+            //SceneManager.LoadScene(lvl);
     }
 }
