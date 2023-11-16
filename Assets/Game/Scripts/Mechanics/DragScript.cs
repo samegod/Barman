@@ -1,77 +1,78 @@
 using System;
-using System.Collections;
 using Game;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-public class DragScript : MonoBehaviour
+namespace Mechanics
 {
-	[SerializeField] private Beer beer;
-	[SerializeField] private float minForceToPush;
-	[SerializeField] private float pushForce;
-
-	private Trajectory _trajectory;
-
-	private Vector3 _startPoint;
-	private Vector3 _endpoint;
-	private Vector3 _force;
-	private float _distance;
-
-	private bool _isDragging;
-
-	public event Action OnDragStop;
-
-	public static event Action<Vector3> OnForceUpdate;
-
-	public void Update()
+	[RequireComponent(typeof(Rigidbody))]
+	public class DragScript : MonoBehaviour
 	{
-		if (_isDragging)
-			OnDrag();
-	}
+		public static event Action<Vector3> OnForceUpdate;
+		public event Action OnDragStop;
+		
+		[SerializeField] private Beer beer;
+		[SerializeField] private float minForceToPush;
+		[SerializeField] private float pushForce;
 
-	public void Init(Trajectory trajectory) =>
-		_trajectory = trajectory;
+		private Trajectory _trajectory;
 
-	private void OnMouseDown()
-	{
-		_isDragging = true;
-		OnDragStart();
-	}
+		private Vector3 _startPoint;
+		private Vector3 _endpoint;
+		private Vector3 _force;
+		private float _distance;
 
-	private void OnMouseUp()
-	{
-		_isDragging = false;
-		OnDragEnd();
+		private bool _isDragging;
 
-		OnDragStop?.Invoke();
-	}
+		public void Update()
+		{
+			if (_isDragging)
+				OnDrag();
+		}
 
-	private void OnDragStart()
-	{
-		_startPoint = Input.mousePosition;
+		public void Init(Trajectory trajectory) =>
+			_trajectory = trajectory;
 
-		_trajectory.Show();
-	}
+		private void OnMouseDown()
+		{
+			_isDragging = true;
+			OnDragStart();
+		}
 
-	private void OnDrag()
-	{
-		_endpoint = Input.mousePosition;
-		_distance = Vector2.Distance(_startPoint, _endpoint);
-		_force = (_startPoint - _endpoint).normalized * (_distance * -pushForce);
+		private void OnMouseUp()
+		{
+			_isDragging = false;
+			OnDragEnd();
 
-		OnForceUpdate?.Invoke(_force);
+			OnDragStop?.Invoke();
+		}
 
-		_trajectory.UpdateDots(transform.position, _force);
-	}
+		private void OnDragStart()
+		{
+			_startPoint = Input.mousePosition;
 
-	private void OnDragEnd()
-	{
-		_isDragging = false;
-		if (_force.x > minForceToPush)
-			beer.AddForce(_force.x * Vector3.right);
+			_trajectory.Show();
+		}
 
-		_force = Vector3.zero;
-		OnForceUpdate?.Invoke(_force);
-		_trajectory.Hide();
+		private void OnDrag()
+		{
+			_endpoint = Input.mousePosition;
+			_distance = Vector2.Distance(_startPoint, _endpoint);
+			_force = (_startPoint - _endpoint).normalized * (_distance * -pushForce);
+
+			OnForceUpdate?.Invoke(_force);
+
+			_trajectory.UpdateDots(transform.position, _force);
+		}
+
+		private void OnDragEnd()
+		{
+			_isDragging = false;
+			if (_force.x > minForceToPush)
+				beer.AddForce(_force.x * Vector3.right);
+
+			_force = Vector3.zero;
+			OnForceUpdate?.Invoke(_force);
+			_trajectory.Hide();
+		}
 	}
 }
