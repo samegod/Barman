@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Scripts.Enemy
+namespace Game
 {
 	[RequireComponent(typeof(Collider))]
 	public class TriggerObserver : MonoBehaviour

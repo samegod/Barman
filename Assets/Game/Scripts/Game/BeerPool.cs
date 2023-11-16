@@ -1,6 +1,6 @@
 ﻿using Pool;
 
-namespace Scripts.Enemy.LevelLogic
+namespace Game
 {
 	public class BeerPool : TransformPool<Beer, BeerPool>
 	{

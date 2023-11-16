@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.Scripts.LevelLogic
+namespace Game
 {
 	public class RetractablePanel : MonoBehaviour
 	{

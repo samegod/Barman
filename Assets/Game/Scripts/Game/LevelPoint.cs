@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
-using Scripts.Enemy;
 using UnityEngine;
 
-namespace Game.Scripts.LevelLogic
+namespace Game
 {
 	public class LevelPoint : MonoBehaviour
 	{

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game.Scripts.LevelLogic
+namespace Game
 {
 	public class LivesController
 	{
